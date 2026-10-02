@@ -1,0 +1,7 @@
+target/
+.bsp/
+.metals/
+.bloop/
+project/project/
+project/target/
+.sbtopts

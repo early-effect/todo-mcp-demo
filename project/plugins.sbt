@@ -1,0 +1,5 @@
+resolvers += "central-snapshots" at "https://central.sonatype.com/repository/maven-snapshots/"
+forceUpdatePeriod := Some(scala.concurrent.duration.Duration.Zero)
+addSbtPlugin("rocks.earlyeffect" % "sbt-zipx" % "0.17.0-SNAPSHOT")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.22.0")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.2")

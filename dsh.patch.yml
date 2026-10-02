@@ -1,0 +1,10 @@
+# Same JSON the Plugins page writes. For a profile that does not open the page:
+# dsh --profile web --patch dsh.patch.yml
+- id: heddle-apps
+  config:
+    servers:
+      - name: todos
+        transport: http
+        url: http://127.0.0.1:8080/mcp
+- id: ui-mcp-mgr
+  disabled: true
