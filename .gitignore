@@ -4,4 +4,3 @@ target/
 .bloop/
 project/project/
 project/target/
-.sbtopts
