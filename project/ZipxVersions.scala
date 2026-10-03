@@ -10,7 +10,7 @@ object DemoVersions extends ZipxVersions:
   val zioTestSbt = zio.mod("zio-test-sbt").test
   val zioJson    = Lib("dev.zio", "zio-json", "1.1.0")
 
-  val heddle     = Lib("rocks.earlyeffect", "heddle", "0.8.1-SNAPSHOT")
+  val heddle     = Lib("rocks.earlyeffect", "heddle", "0.9.0-SNAPSHOT")
   val heddleMcp  = heddle.mod("heddle-mcp")
   val heddleApps = heddle.mod("heddle-mcp-apps")
 
@@ -18,8 +18,8 @@ object DemoVersions extends ZipxVersions:
   val ascentCss     = Lib("rocks.earlyeffect", "ascent-css", "0.10.0-SNAPSHOT")
   val ascentHistory = Lib("rocks.earlyeffect", "ascent-history", "0.10.0-SNAPSHOT")
 
-  val scalajs   = Plugin("org.scala-js", "sbt-scalajs", "1.22.0")
-  val scalafmt  = Plugin("org.scalameta", "sbt-scalafmt", "2.6.2")
+  val scalajs  = Plugin("org.scala-js", "sbt-scalajs", "1.22.0")
+  val scalafmt = Plugin("org.scalameta", "sbt-scalafmt", "2.6.2")
 
   val ascentMcpApp = Lib("rocks.earlyeffect", "ascent-mcp-app", "0.10.0-SNAPSHOT")
   val heddleHost   = heddle.mod("heddle-mcp-apps-host")

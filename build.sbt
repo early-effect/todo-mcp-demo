@@ -2,7 +2,7 @@ import org.scalajs.linker.interface.ModuleKind
 
 DemoVersions.settings
 
-ThisBuild / organization := "rocks.earlyeffect"
+ThisBuild / organization    := "rocks.earlyeffect"
 ThisBuild / zipxJavaVersion := JdkVersion("25")
 
 val scala3 = DemoVersions.scala.toString
@@ -76,10 +76,10 @@ lazy val server = project
       val linkedView = (view.js(scala3) / Compile / fastLinkJS).value
       val linkedHost = (host.js(scala3) / Compile / fastLinkJS).value
       val _          = (linkedPage, linkedView, linkedHost)
-      val dir    = (Compile / resourceManaged).value
-      val pageJs = dir / "page.js"
-      val viewJs = dir / "todo-view.js"
-      val hostJs = dir / "todo-host.js"
+      val dir        = (Compile / resourceManaged).value
+      val pageJs     = dir / "page.js"
+      val viewJs     = dir / "todo-view.js"
+      val hostJs     = dir / "todo-host.js"
       IO.copyFile((page.js(scala3) / Compile / fastLinkJSOutput).value / "main.js", pageJs)
       IO.copyFile((view.js(scala3) / Compile / fastLinkJSOutput).value / "main.js", viewJs)
       IO.copyFile((host.js(scala3) / Compile / fastLinkJSOutput).value / "main.js", hostJs)

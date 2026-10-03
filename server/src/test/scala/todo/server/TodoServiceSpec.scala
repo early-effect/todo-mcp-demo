@@ -47,8 +47,7 @@ object TodoServiceSpec extends ZIOSpecDefault:
           val text = body.collectFirst { case ResourceContents.Text(_, _, raw, _) => raw.fromJson[Board] }
           assertTrue(live, uri.contains(TodoShed.boardUri), text.contains(Right(milk)), milk.todos.length == 1)
       }
-    } @@ TestAspect.withLiveClock
-    ,
+    } @@ TestAspect.withLiveClock,
     test("tools/list is the eight board tools, and the view asks for no network") {
       ZIO.scoped {
         for
@@ -88,52 +87,54 @@ object TodoServiceSpec extends ZIOSpecDefault:
     },
     test("the page event stream sends the current board, then the added one") {
       for
-        svc    <- TodoService.make
-        mcp    <- ZIO.fromEither(svc.mcp("view"))
-        _      <- svc.arm(mcp)
+        svc <- TodoService.make
+        mcp <- ZIO.fromEither(svc.mcp("view"))
+        _   <- svc.arm(mcp)
         routes = Routes.fromHandler(Handler(svc.dispatch(mcp)))
-        story <- ZIO.scoped {
-          for
-            res    <- ZIO.serviceWithZIO[Client](_.streaming(Request.get("/todos/events")))
-            heard  <- Queue.unbounded[ServerSentEvent]
-            _      <- SseCodec.stream(res.body.toStream.mapError(_ => None)).foreach(heard.offer).fork
-            first  <- awaitEvent(heard)
-            _      <- Client.call(Endpoints.add)(AddTodo("milk"))
-            second <- awaitEvent(heard)
-            denied <- routes(
-              Request
-                .post(
-                  "/mcp",
-                  Body.json(
-                    Json
-                      .Obj(
-                        "jsonrpc" -> Json.Str("2.0"),
-                        "id"      -> Json.Num(9),
-                        "method"  -> Json.Str("resources/subscribe"),
-                        "params"  -> Json.Obj(
-                        "uri" -> Json.Str(TodoShed.boardUri),
-                        "_meta" -> Json.Obj(
-                          "io.modelcontextprotocol/protocolVersion" -> Json.Str(
-                            heddle.mcp.protocol.ProtocolVersion.Current.value
-                          )
-                        ),
-                      ),
-                      )
-                      .toJson
-                  ),
-                )
-                .withHeader(Http.ProtocolHeader, heddle.mcp.protocol.ProtocolVersion.Current.value)
-                .withHeader(Http.MethodHeader, "resources/subscribe")
-            )
-          yield
-            val boards = List(first, second).flatten.flatMap(_.data.fromJson[Board].toOption)
-            assertTrue(
-              boards.headOption.exists(_.todos.isEmpty),
-              boards.lift(1).map(_.todos.map(_.text)).contains(Chunk("milk")),
-              denied.status == Status.BadRequest,
-              denied.body.text.exists(_.contains("needs a session")),
-            )
-        }.provide(Client.inMemory(routes))
+        story <- ZIO
+          .scoped {
+            for
+              res    <- ZIO.serviceWithZIO[Client](_.streaming(Request.get("/todos/events")))
+              heard  <- Queue.unbounded[ServerSentEvent]
+              _      <- SseCodec.stream(res.body.toStream.mapError(_ => None)).foreach(heard.offer).fork
+              first  <- awaitEvent(heard)
+              _      <- Client.call(Endpoints.add)(AddTodo("milk"))
+              second <- awaitEvent(heard)
+              denied <- routes(
+                Request
+                  .post(
+                    "/mcp",
+                    Body.json(
+                      Json
+                        .Obj(
+                          "jsonrpc" -> Json.Str("2.0"),
+                          "id"      -> Json.Num(9),
+                          "method"  -> Json.Str("resources/subscribe"),
+                          "params"  -> Json.Obj(
+                            "uri"   -> Json.Str(TodoShed.boardUri),
+                            "_meta" -> Json.Obj(
+                              "io.modelcontextprotocol/protocolVersion" -> Json.Str(
+                                heddle.mcp.protocol.ProtocolVersion.Current.value
+                              )
+                            ),
+                          ),
+                        )
+                        .toJson
+                    ),
+                  )
+                  .withHeader(Http.ProtocolHeader, heddle.mcp.protocol.ProtocolVersion.Current.value)
+                  .withHeader(Http.MethodHeader, "resources/subscribe")
+              )
+            yield
+              val boards = List(first, second).flatten.flatMap(_.data.fromJson[Board].toOption)
+              assertTrue(
+                boards.headOption.exists(_.todos.isEmpty),
+                boards.lift(1).map(_.todos.map(_.text)).contains(Chunk("milk")),
+                denied.status == Status.BadRequest,
+                denied.body.text.exists(_.contains("needs a session")),
+              )
+          }
+          .provide(Client.inMemory(routes))
       yield story
     } @@ TestAspect.withLiveClock @@ TestAspect.timeout(10.seconds),
   )
