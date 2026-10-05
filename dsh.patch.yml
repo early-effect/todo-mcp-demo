@@ -1,5 +1,5 @@
-# Same JSON the Plugins page writes. For a profile that does not open the page:
-# dsh --profile web --patch dsh.patch.yml
+# Same JSON the Plugins page writes. --patch is a launcher flag, before the web app's own flags:
+# dsh web --patch dsh.patch.yml --no-open
 - id: heddle-apps
   config:
     servers:
