@@ -10,6 +10,7 @@ import todo.*
 import todo.widgets.*
 import zio.*
 import zio.json.*
+import heddle.mcp.apps.ui.ViewNotification.Log
 
 object Main extends ZIOAppDefault:
   def run =
@@ -21,6 +22,7 @@ object Main extends ZIOAppDefault:
 
   private def program =
     for
+      _      <- ZIO.log("Starting program")
       state  <- sq(Shell.empty)
       hist   <- History.browser
       origin <- ZIO

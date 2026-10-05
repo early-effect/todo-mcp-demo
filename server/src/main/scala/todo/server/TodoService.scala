@@ -1,19 +1,15 @@
 package todo.server
 
-import heddle.*
+import heddle.{ServerError as _, *}
 import heddle.http.{Method, Request, Response, Status}
-import heddle.mcp.{Mcp, McpBuildError, ServedResource}
-import heddle.mcp.apps.{AppBuildError, UiDocument, withApp}
+import heddle.mcp.{Mcp, ServedResource}
+import heddle.mcp.apps.{UiDocument, withApp}
 import heddle.mcp.protocol.{Resource, ResourceContents}
 import heddle.sse.{ServerSentEvent, Sse, SseField}
 import todo.*
 import zio.*
 import zio.json.*
 import zio.stream.ZStream
-
-enum Startup:
-  case Mcp(errors: NonEmptyChunk[McpBuildError])
-  case App(errors: NonEmptyChunk[AppBuildError])
 
 /** The one board. HTTP routes and the MCP server both call it, and a change is pushed on both channels. */
 final class TodoService private (
@@ -60,7 +56,7 @@ final class TodoService private (
     }
     Sse.response(stream)
 
-  def mcp(viewJs: String): Either[Startup, Mcp[Any]] =
+  def mcp(viewJs: String): Either[ServerError, Mcp[Any]] =
     val resource = Resource(TodoShed.boardUri, "board", mimeType = Some("application/json"))
     val served   = ServedResource(
       resource,
@@ -69,9 +65,9 @@ final class TodoService private (
       },
     )
     for
-      base <- Mcp.from(api).left.map(Startup.Mcp(_))
-      app  <- base.withApp(TodoShed.shed, UiDocument("Todos", viewJs)).left.map(Startup.App(_))
-      both <- app.withResources(served).left.map(Startup.Mcp(_))
+      base <- Mcp.from(api).left.map(ServerError.Mcp(_))
+      app  <- base.withApp(TodoShed.shed, UiDocument("Todos", viewJs)).left.map(ServerError.App(_))
+      both <- app.withResources(served).left.map(ServerError.Mcp(_))
     yield both
 
   /** Later saves publish `notifications/resources/updated` for the board. */

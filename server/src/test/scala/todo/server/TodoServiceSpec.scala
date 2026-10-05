@@ -18,6 +18,29 @@ object TodoServiceSpec extends ZIOSpecDefault:
   private val info = heddle.mcp.protocol.Implementation("todo-service-spec", "0")
 
   def spec = suite("TodoService")(
+    test("the shell endpoints are html and javascript, and a board path is not one of them") {
+      val routes =
+        Assets.api(Html("<p>board</p>"), Html("<p>host</p>"), Javascript("page()"), Javascript("host()")).routes
+      val story =
+        for
+          page   <- Client.call(Assets.page)(())
+          host   <- Client.call(Assets.host)(())
+          pageJs <- Client.call(Assets.pageJs)(())
+          hostJs <- Client.call(Assets.hostJs)(())
+          raw    <- routes(Request.get("/"))
+          script <- routes(Request.get("/page.js"))
+          other  <- routes(Request.get("/todos"))
+        yield assertTrue(
+          page.value == "<p>board</p>",
+          host.value == "<p>host</p>",
+          pageJs.value == "page()",
+          hostJs.value == "host()",
+          raw.header("content-type").contains(MediaType.HtmlUtf8.render),
+          script.header("content-type").contains(MediaType.JavascriptUtf8.render),
+          other.status == Status.NotFound,
+        )
+      story.provide(Client.inMemory(routes))
+    },
     test("the board routes add, toggle, rename, move, and reject a blank") {
       for
         svc   <- TodoService.make

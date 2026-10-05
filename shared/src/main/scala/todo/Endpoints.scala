@@ -16,12 +16,12 @@ object Endpoints:
 
   val add: Endpoint[AddTodo, TodoError, Board] =
     rejected(
-      Endpoint.post("todos").inJson[AddTodo].out[Board].summary("Add a todo").mcp("add_todo")
+      Endpoint.post("todos").in[AddTodo].out[Board].summary("Add a todo").mcp("add_todo")
     )
 
   val toggle: Endpoint[TodoRef, TodoError, Board] =
     rejected(
-      Endpoint.post("todos" / "toggle").inJson[TodoRef].out[Board].summary("Toggle a todo").mcp("toggle_todo")
+      Endpoint.post("todos" / "toggle").in[TodoRef].out[Board].summary("Toggle a todo").mcp("toggle_todo")
     )
 
   val toggleAll: Endpoint[Unit, Nothing, Board] =
@@ -29,7 +29,7 @@ object Endpoints:
 
   val delete: Endpoint[TodoRef, TodoError, Board] =
     rejected(
-      Endpoint.post("todos" / "delete").inJson[TodoRef].out[Board].summary("Delete a todo").mcp("delete_todo")
+      Endpoint.post("todos" / "delete").in[TodoRef].out[Board].summary("Delete a todo").mcp("delete_todo")
     )
 
   val clear: Endpoint[Unit, Nothing, Board] =
@@ -37,11 +37,11 @@ object Endpoints:
 
   val rename: Endpoint[RenameTodo, TodoError, Board] =
     rejected(
-      Endpoint.post("todos" / "rename").inJson[RenameTodo].out[Board].summary("Rename a todo").mcp("rename_todo")
+      Endpoint.post("todos" / "rename").in[RenameTodo].out[Board].summary("Rename a todo").mcp("rename_todo")
     )
 
   val move: Endpoint[MoveTodo, TodoError, Board] =
     rejected(
-      Endpoint.post("todos" / "move").inJson[MoveTodo].out[Board].summary("Move a todo").mcp("move_todo")
+      Endpoint.post("todos" / "move").in[MoveTodo].out[Board].summary("Move a todo").mcp("move_todo")
     )
 end Endpoints
