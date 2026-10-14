@@ -4,3 +4,7 @@ target/
 .bloop/
 project/project/
 project/target/
+project/metals.sbt
+*.semanticdb
+.vscode/
+.mcp.json
