@@ -1,7 +1,6 @@
 package todo.page
 
 import ascent.*
-import ascent.history.History
 import ascent.js.AscentApp
 import ascent.squawk.{Source, sq}
 import heddle.client.Client
@@ -10,7 +9,6 @@ import todo.*
 import todo.widgets.*
 import zio.*
 import zio.json.*
-import heddle.mcp.apps.ui.ViewNotification.Log
 
 object Main extends ZIOAppDefault:
   def run =
@@ -24,13 +22,12 @@ object Main extends ZIOAppDefault:
     for
       _      <- ZIO.log("Starting program")
       state  <- sq(Shell.empty)
-      hist   <- History.browser
+      filter <- Hash.filter
       origin <- ZIO
         .fromEither(Url.decode(dom.window.location.origin))
         .orDieWith(e => IllegalArgumentException(e.toString))
       client <- ZIO.service[Client]
-      act    = Live(state, origin, client)
-      filter = hist.location.map(loc => todo.Filter.fromHash(loc.hash))
+      act = Live(state, origin, client)
       _ <- AscentApp.mountBody(App.component(state, filter, act))
       _ <- Client
         .sse(s"${dom.window.location.origin}/todos/events")

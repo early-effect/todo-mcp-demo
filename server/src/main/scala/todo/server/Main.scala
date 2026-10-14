@@ -1,6 +1,7 @@
 package todo.server
 
 import heddle.{ServerError as _, *}
+import heddle.server.Port
 import zio.*
 
 object Main extends ZIOAppDefault:
@@ -21,7 +22,7 @@ object Main extends ZIOAppDefault:
         Routes.fromHandler(Handler(svc.dispatch(mcp)))
       _ <- Server
         .serve(routes)
-        .provide(Server.defaultWith(_.copy(host = "127.0.0.1", port = 8080)))
+        .provide(Server.defaultWith(_.copy(host = "127.0.0.1", port = Port(8080))))
         .mapError(ServerError.Serve(_))
     yield ()
 

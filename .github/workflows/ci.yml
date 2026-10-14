@@ -104,8 +104,6 @@ jobs:
           cache-mode: save
           purge: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'purge') }}
           cache-epoch: ""
-      - name: Pinned snapshots
-        run: echo "::warning title=zipx snapshots::pinned snapshots (rocks.earlyeffect:heddle:0.9.0-SNAPSHOT, rocks.earlyeffect:heddle-mcp:0.9.0-SNAPSHOT, rocks.earlyeffect:heddle-mcp-apps:0.9.0-SNAPSHOT, rocks.earlyeffect:ascent-js:0.10.1-SNAPSHOT, rocks.earlyeffect:ascent-css:0.10.0-SNAPSHOT, rocks.earlyeffect:ascent-history:0.10.0-SNAPSHOT, rocks.earlyeffect:ascent-mcp-app:0.10.0-SNAPSHOT, rocks.earlyeffect:heddle-mcp-apps-host:0.9.0-SNAPSHOT, rocks.earlyeffect:heddle-mcp-apps-frame:0.9.0-SNAPSHOT)"
       - name: test
         run: |
           if [ "$ZIPX_VERIFY_CLEAN_FULL" = "true" ]; then

@@ -10,24 +10,22 @@ object DemoVersions extends ZipxVersions:
   val zioTestSbt = zio.mod("zio-test-sbt").test
   val zioJson    = Lib("dev.zio", "zio-json", "1.1.0")
 
-  val heddle     = Lib("rocks.earlyeffect", "heddle", "0.9.0-SNAPSHOT")
+  val heddle     = Lib("rocks.earlyeffect", "heddle", "0.11.0")
   val heddleMcp  = heddle.mod("heddle-mcp")
   val heddleApps = heddle.mod("heddle-mcp-apps")
 
-  val ascentJs      = Lib("rocks.earlyeffect", "ascent-js", "0.10.1-SNAPSHOT")
-  val ascentCss     = Lib("rocks.earlyeffect", "ascent-css", "0.10.0-SNAPSHOT")
-  val ascentHistory = Lib("rocks.earlyeffect", "ascent-history", "0.10.0-SNAPSHOT")
+  val ascentJs  = Lib("rocks.earlyeffect", "ascent-js", "0.11.0")
+  val ascentCss = Lib("rocks.earlyeffect", "ascent-css", "0.10.1")
 
   val scalajs  = Plugin("org.scala-js", "sbt-scalajs", "1.22.0")
   val scalafmt = Plugin("org.scalameta", "sbt-scalafmt", "2.6.2")
 
-  val ascentMcpApp = Lib("rocks.earlyeffect", "ascent-mcp-app", "0.10.0-SNAPSHOT")
-  val heddleHost   = heddle.mod("heddle-mcp-apps-host")
-  val heddleFrame  = heddle.mod("heddle-mcp-apps-frame")
+  val heddleHost  = heddle.mod("heddle-mcp-apps-host")
+  val heddleFrame = heddle.mod("heddle-mcp-apps-frame")
 
   def sharedLib = library(zio, zioJson, heddle, heddleMcp, heddleApps)
   def serverLib = library(zio, zioJson, heddle, heddleMcp, heddleApps)
-  def pageLib   = library(zio, zioJson, heddle, ascentJs, ascentCss, ascentHistory)
-  def viewLib   = library(zio, zioJson, heddle, heddleApps, ascentJs, ascentCss, ascentHistory, ascentMcpApp)
+  def pageLib   = library(zio, zioJson, heddle, ascentJs, ascentCss)
+  def viewLib   = library(zio, zioJson, heddle, heddleApps, ascentJs, ascentCss)
   def hostLib   = library(zio, heddle, heddleMcp, heddleApps, heddleHost, heddleFrame, ascentJs)
   def testLib   = library(zioTest, zioTestSbt)
