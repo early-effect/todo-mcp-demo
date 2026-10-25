@@ -20,4 +20,3 @@ trait Act:
   def commit(id: TodoId, text: String): UIO[Unit]
   def cancel(id: TodoId): UIO[Unit]
   def move(dragged: TodoId, target: TodoId): UIO[Unit]
-end Act
