@@ -45,6 +45,7 @@ final class TodoService private (
       .bind(Endpoints.clear)(_ => board.get.flatMap(current => save(current.clearCompleted)))
       .bind(Endpoints.rename)(in => change(_.rename(in.id, in.text)))
       .bind(Endpoints.move)(in => change(_.move(in.dragged, in.target)))
+  end api
 
   /** Current board, then each later one. The hub is subscribed before the current read, so a save in between is kept.
     */
@@ -94,4 +95,3 @@ object TodoService:
       hub   <- Hub.sliding[Board](1)
       ping  <- Ref.make[UIO[Unit]](ZIO.unit)
     yield TodoService(board, ids, hub, ping)
-end TodoService
